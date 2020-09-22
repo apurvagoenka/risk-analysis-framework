@@ -1,0 +1,246 @@
+{
+  "settings": {
+    "org": "Temp Org Inc.",
+    "org_abbr": "TO",
+    "data_dir": "data/org/",
+    "splunk_output_dir": "data/org/splunk",
+    "csv_output": "RAEngine Analysis.csv",
+    "datestr_format": "%Y-%m-%d %H-%M-%S",
+
+    "thresholds": {
+      "critical": "7.2-20",
+      "high": "5-7.2",
+      "medium": "3-5",
+      "critical_types": "RCE,ACE,SQLi",
+      "outofband_types": "RCE,ACE,SQLi"
+    },
+
+    "weights": {
+      "risk": {
+        "cvss": 0.5,
+        "sev": 0.5
+      },
+      "impact": {
+        "attack_surface": {
+          "total": 0.5
+        },
+        "protection": {
+          "total": 0.25,
+          "role": 0.6,
+          "identity": 0.4
+        },
+        "availability": {
+          "total": 0.25,
+          "service": 0.3,
+          "network_density": 0.7
+        }
+      },
+      "overall": {
+        "risk": 0.6,
+        "impact": 0.4
+      }
+    }
+  },
+
+  "data_ingestion": {
+    "qualys": {
+      "hostname": "https://qualysapi.qualys.com/",
+      "port": 443,
+      "report_call": "https://qualysapi.qualys.com/api/2.0/fo/report/",
+      "report_name": "",
+      "username": "",
+      "password": "",
+      "save_path": "data/org/"
+    },
+
+    "infoblox": {
+      "hostname": "infoblox_hostname.domain.com",
+      "port": 80,
+      "username": "",
+      "password": "",
+      "offline_path": "vlan-output.csv"
+    },
+
+    "splunk": {
+      "hostname": "splunk_hostname.domain.com",
+      "port": 8089,
+      "username": "",
+      "password": "",
+
+      "query": {
+        "index": "suricata_i",
+        "time_range_start": "-7d@d",
+        "time_range_end": "now",
+        "dest_port_filter": 10000,
+        "host_list_filename": "raengine_host_list.csv"
+      }
+    }
+  },
+
+  "attack_table": {
+
+    "DoS": {
+      "score": 1,
+      "keywords": "Denial of Service, DoS, DDoS"
+    },
+    "XSS": {
+      "score": 9.5,
+      "keywords": "Cross-Site Scripting,XSS"
+    },
+    "SQLi": {
+      "score": 9,
+      "keywords": "SQL Injection"
+    },
+    "RCE": {
+      "score": 10,
+      "keywords": "Remote Code Execution"
+    },
+    "ACE": {
+      "score": 10,
+      "keywords": "Arbritary Code,Buffer Overflow,Code Execution,Command Execution, Arbitrary code"
+    },
+    "Unquoted Search Path": {
+      "score": 8,
+      "keywords": "Elevate Privileges, Unquoted Search Path, Privilege Escalation, Escalate, Privileges"
+    },
+    "Social Engineering": {
+      "score": 5,
+      "keywords": "Tricking, Malicious URL, Phishing, Convincing a user, Malicious"
+    },
+    "Missing Update": {
+      "score": 6,
+      "keywords": "Missing an update, not supported, out-of-date, Lack support, no patches, actively maintained, version, software update, an update, not been updated, updated, missing a security update, reboot is required by Windows Update, out of date"
+    },
+    "Data Exfiltration": {
+      "score": 9,
+      "keywords": "Disclose Information, Information Disclosure, disclosure of potentially sensitive information, server discloses the, uncover important information, disclose system information"
+    },
+    "Generic Execution": {
+      "score": 9,
+      "keywords": "Execution"
+    },
+    "Kernel": {
+      "score": 10,
+      "keywords": "Kernel"
+    },
+    "Microprocessor": {
+      "score": 9,
+      "keywords": "Microprocessor, Microcode, spectre, speculative execution"
+    },
+    "Expose Keys": {
+      "score": 9,
+      "keywords": "recover private RSA keys, expose RSA key, expose RSA"
+    },
+    "Weak Cryptography": {
+      "score": 8,
+      "keywords": "weak cipher suites, credentials to be sent in the clear, weak encryption, SWEET32, weak cryptography, weak keys, unencrypted, insecurely renegotiate"
+    },
+    "Certificate Issue": {
+      "score": 1,
+      "keywords": "certificate cannot be trusted, self-signed, medium strength encryption, certificate presented for this service is for a different machine, weak hashing algorithm, expiry dates of certificates"
+    },
+    "Generic Enumeration and Recon": {
+      "score": 4,
+      "keywords": "information is of great use to an attacker, remote attacker to determine, EXPN, VRFY "
+    },
+    "Directory Enumeration": {
+      "score": 8,
+      "keywords": "web server that are browsable, web server's configuration, web server's activity"
+    },
+    "One-Off High": {
+      "score": 7,
+      "keywords": "[4.1.12-112.14.2.el7uek], [4.1.12-112.16.7.el7uek], NIS password file, NIS domain of the network"
+    },
+    "Port Open":{
+      "score": 5,
+      "keywords": "sensitive ports"
+    },
+    "Default Credentials": {
+      "score": 10,
+      "keywords":"default credentials, default password"
+    },
+    "Man-In-The-Middle":{
+      "score":7,
+      "keywords":"man-in-the-middle, Mitm, in the middle"
+    },
+    "Ignore": {
+      "score": 1,
+      "keywords": ".DS_Store, default index page, default error page, trace and track"
+    }
+  },
+
+
+  "service_pa_scores": {
+    "21": {
+      "service_name": "ftp",
+      "protection": 7,
+      "availability": 7
+    },
+
+    "22": {
+      "service_name": "ssh",
+      "protection": 5,
+      "availability": 3
+    },
+
+    "23": {
+      "service_name": "telnet",
+      "protection": 8,
+      "availability": 8
+    },
+
+    "25": {
+      "service_name": "smtp",
+      "protection": 7,
+      "availability": 6
+    },
+
+    "80": {
+      "service_name": "http",
+      "protection": 5,
+      "availability": 8
+    },
+
+    "3389": {
+      "service_name": "rdp",
+      "protection": 7,
+      "availability": 8
+    },
+
+    "443": {
+      "service_name": "https",
+      "protection": 6,
+      "availability": 8
+    },
+
+    "3306": {
+      "service_name": "mysql",
+      "protection": 9,
+      "availability": 7
+    },
+
+    "389": {
+      "service_name": "ldap",
+      "protection": 8,
+      "availability": 9
+    },
+
+    "636": {
+      "service_name": "ldaps",
+      "protection": 8,
+      "availability": 9
+    },
+
+    "5432": {
+      "service_name": "postgres",
+      "protection": 9,
+      "availability": 7
+    },
+
+    "445": {
+      "service_name": "smb",
+      "protection": 7,
+      "availability": 7
+    }
+  }
+}
