@@ -21,20 +21,20 @@ class RAEngineController:
         self.RUN_TIME = datetime.now().strftime(self.DATE_STR)
         self.ORG = self.CONF["settings"]["org_abbr"]
         self.DATA_DIR = self.CONF["settings"]["data_dir"]
-        self.OUTPUT_DIR = "{}/{}/{}/".format('output', self.ORG, self.RUN_TIME)
+        self.OUTPUT_DIR = f"output/{self.ORG}/{self.RUN_TIME}/"
         if not os.path.exists(self.DATA_DIR):
             os.makedirs(self.DATA_DIR)
         if not os.path.exists(self.OUTPUT_DIR):
             os.makedirs(self.OUTPUT_DIR)
 
     def load_db(self):
-        with open(self.DATA_DIR + "vuln_data.json", "r") as vuln:
+        with open(f"{self.DATA_DIR}vuln_data.json", "r") as vuln:
             self.vuln_data = json.load(vuln)
 
-        with open(self.DATA_DIR + "host_data.json", "r") as host:
+        with open(f"{self.DATA_DIR}host_data.json", "r") as host:
             self.host_data = json.load(host)
 
-        with open(self.DATA_DIR + "subnet_data.json", "r") as subnet:
+        with open(f"{self.DATA_DIR}subnet_data.json", "r") as subnet:
             self.subnet_data = json.load(subnet)
 
     def main(self):

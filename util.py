@@ -12,16 +12,11 @@ def decrypt(value):
             key = line
     cipher = Fernet(key)
     plaintext = cipher.decrypt(bytes(value, 'utf-8'))
-    plaintext_str = bytes(plaintext).decode("utf-8")
-
-    return plaintext_str
+    return bytes(plaintext).decode("utf-8")
 
 
 def float_range(value, lower_bound, upper_bound):
-    if lower_bound <= value <= upper_bound:
-        return True
-    else:
-        return False
+    return lower_bound <= value <= upper_bound
 
 
 def max_words(string, words):
@@ -29,18 +24,17 @@ def max_words(string, words):
     word_count = 0
     for word in string.split(" "):
         if word_count < words:
-            truncated_str += " %s" % word
+            truncated_str += f" {word}"
             word_count += 1
     if len(string.split(" ")) > words:
-        return truncated_str.lstrip().rstrip() + "..."
+        return f"{truncated_str.lstrip().rstrip()}..."
     else:
         return truncated_str.lstrip().rstrip()
 
 
 def get_newest_file(dir, date_string):
     file_date = None
-    files = os.listdir(dir)
-    if files:
+    if files := os.listdir(dir):
         newest = datetime.strptime(files[0].split(".")[0], date_string)
         for file in files:
             file_date = datetime.strptime(file.split(".")[0], date_string)

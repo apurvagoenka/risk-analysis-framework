@@ -18,9 +18,7 @@ class HostImpact:
     def get_conn_bounds(self, subnet):
         subnet_hosts = []
         for cidr in self.subnet_hosts[subnet].keys():
-            for host in self.subnet_hosts[subnet][cidr]:
-                subnet_hosts.append(host)
-
+            subnet_hosts.extend(iter(self.subnet_hosts[subnet][cidr]))
         max_conns = 0
         min_conns = 1000000
         for host in subnet_hosts:
@@ -86,7 +84,7 @@ class HostImpact:
             host['availability'] = service_availability + density
 
     def export_csv(self):
-        with open(self.data_dir + "HostImpact.csv", 'w+', newline='') as file:
+        with open(f"{self.data_dir}HostImpact.csv", 'w+', newline='') as file:
             writer = csv.writer(file)
             writer.writerow(["IP", "Subnet", "CIDR", "Protection", "Availability"])
             for host in self.host_data:

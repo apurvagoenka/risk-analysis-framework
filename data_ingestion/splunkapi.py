@@ -45,7 +45,7 @@ class SplunkAPI:
             for result in rr:
                 if isinstance(result, results.Message):
                     # Diagnostic messages may be returned in the results
-                    print('%s: %s' % (result.type, result.message))
+                    print(f'{result.type}: {result.message}')
                 elif isinstance(result, dict):
                     # Normal events are returned as dicts
                     c += 1
@@ -53,5 +53,5 @@ class SplunkAPI:
                         host_connections[result['dest_ip']] = {}
                     host_connections[result['dest_ip']][result['dest_port']] = int(result['count'])
 
-        print("{} rows fetched".format(c))
+        print(f"{c} rows fetched")
         return host_connections

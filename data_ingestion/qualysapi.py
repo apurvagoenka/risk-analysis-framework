@@ -58,10 +58,7 @@ class QualysAPI:
             with open(self.REPORT_CACHE, 'r') as latest_report:
                 latest_date = datetime.strptime(json.load(latest_report)['DATE'], '%Y-%m-%dT%H:%M:%SZ')
                 if report_id != 0:
-                    if datetime.strptime(report_date, '%Y-%m-%dT%H:%M:%SZ') > latest_date:
-                        fetch = True
-                    else:
-                        fetch = False
+                    fetch = datetime.strptime(report_date, '%Y-%m-%dT%H:%M:%SZ') > latest_date
                 else:
                     fetch = False
 
@@ -72,7 +69,7 @@ class QualysAPI:
             'action': 'fetch',
             'id': report_id
         }
-        save_path = self.SAVE_PATH + "Qualys Report {}.csv".format(report_id)
+        save_path = f"{self.SAVE_PATH}Qualys Report {report_id}.csv"
         print("Fetching ID:", report_id)
         print("Saving to: ", save_path)
         response = requests.post(self.REPORT_CALL, data=payload, headers=self.HEADERS, auth=self.AUTH, stream=True)
@@ -122,14 +119,14 @@ class QualysAPI:
                 self.vuln_data[obj.getQID()] = {
                     "title": obj.getTitle(),
                     "cvss": obj.getCVSSv3(),
-                    'port': "{}/{}".format(obj.getProtocol(), obj.getPort()),
+                    'port': f"{obj.getProtocol()}/{obj.getPort()}",
                     "exploitability": obj.getExploitability(),
                     "first_seen": obj.getFirstDetected(),
                     'category': obj.getCategory(),
                     "threat": obj.getThreat(),
                     "impact": obj.getImpact(),
                     "solution": obj.getSolution(),
-                    "hosts": []
+                    "hosts": [],
                 }
             vuln_obj = self.vuln_data[obj.getQID()]
             if obj.getIP() not in vuln_obj["hosts"]:
@@ -149,11 +146,13 @@ class QualysAPI:
                 host_obj['vulns'].append(obj.getQID())
 
     def load_db(self):
-        if os.path.exists(self.SAVE_PATH + "vuln_data.json") and os.path.exists(self.SAVE_PATH + "host_data.json"):
+        if os.path.exists(f"{self.SAVE_PATH}vuln_data.json") and os.path.exists(
+            f"{self.SAVE_PATH}host_data.json"
+        ):
             print("DB exists, loading...")
-            with open(self.SAVE_PATH + "vuln_data.json", "r") as vuln:
+            with open(f"{self.SAVE_PATH}vuln_data.json", "r") as vuln:
                 self.vuln_data = json.load(vuln)
-            with open(self.SAVE_PATH + "host_data.json", "r") as host:
+            with open(f"{self.SAVE_PATH}host_data.json", "r") as host:
                 self.host_data = json.load(host)
         else:
             print("DB not found, generating...")
@@ -275,10 +274,7 @@ class QData: # Qualys Data Object
         return self.impact
 
     def getExploitability(self):
-        if self.exploitability:
-            return 'Yes'
-        else:
-            return 'No'
+        return 'Yes' if self.exploitability else 'No'
 
     def getResults(self):
         return self.results

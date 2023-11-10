@@ -32,23 +32,23 @@ class DataIngestionController:
         self.DATE_STR = self.CONF['settings']['datestr_format']
 
     def update_db(self):
-        with open(self.DATA_DIR + "vuln_data.json", "w+") as vuln:
+        with open(f"{self.DATA_DIR}vuln_data.json", "w+") as vuln:
             json.dump(self.vuln_data, vuln, indent=2)
 
-        with open(self.DATA_DIR + "host_data.json", "w+") as host:
+        with open(f"{self.DATA_DIR}host_data.json", "w+") as host:
             json.dump(self.host_data, host, indent=2)
 
-        with open(self.DATA_DIR + "subnet_data.json", "w+") as subnet:
+        with open(f"{self.DATA_DIR}subnet_data.json", "w+") as subnet:
             json.dump(self.subnet_data, subnet, indent=2)
 
     def load_db(self):
-        with open(self.DATA_DIR + "vuln_data.json", "r") as vuln:
+        with open(f"{self.DATA_DIR}vuln_data.json", "r") as vuln:
             self.vuln_data = json.load(vuln)
 
-        with open(self.DATA_DIR + "host_data.json", "r") as host:
+        with open(f"{self.DATA_DIR}host_data.json", "r") as host:
             self.host_data = json.load(host)
 
-        with open(self.DATA_DIR + "subnet_data.json", "r") as subnet:
+        with open(f"{self.DATA_DIR}subnet_data.json", "r") as subnet:
             self.subnet_data = json.load(subnet)
 
     def get_subnet(self, host, subnet_info, subnets):
@@ -76,7 +76,7 @@ class DataIngestionController:
         earliest = latest - timedelta(days=days)
         for file in files:
             if earliest <= datetime.strptime(file.split(".")[0], self.DATE_STR) <= latest:
-                with open("{}/{}".format(self.SPLUNK_OUT, file)) as conns:
+                with open(f"{self.SPLUNK_OUT}/{file}") as conns:
                     host_conns = json.load(conns)
                     for host in host_conns.keys():
                         if host not in host_connections.keys():
@@ -108,7 +108,7 @@ class DataIngestionController:
             host_connections = splunk_import.get_host_connections()
 
             # Save Splunk Output
-            with open("{}/{}.json".format(self.SPLUNK_OUT, latest.strftime(self.DATE_STR)), 'w+') as file:
+            with open(f"{self.SPLUNK_OUT}/{latest.strftime(self.DATE_STR)}.json", 'w+') as file:
                 json.dump(host_connections, file, indent=2)
 
         # Update Log Data

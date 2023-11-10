@@ -48,14 +48,11 @@ class RAEAnalysis:
             sev_score = 0.0
             types = matches.keys()
             type = ", ".join(types)
-            divider = 1
-            allscores = []
-
             """Algorithm for multiple matches"""
             if matches:
-                for score in matches.values():
-                    allscores.append(score)
+                allscores = list(matches.values())
                 allscores.sort(reverse=True)
+                divider = 1
                 for score in allscores:
                     temp = int((score * 9) / 10)
                     if temp is 0:
@@ -151,7 +148,7 @@ class RAEAnalysis:
             risk_weight = self.weights["overall"]["risk"]
             impact_weight = self.weights["overall"]["impact"]
             final_score = (risk_weight * float(plugin['analysis']['risk_score'])) + \
-                          (impact_weight * float(plugin['analysis']['impact_score']))
+                              (impact_weight * float(plugin['analysis']['impact_score']))
             plugin['analysis']['final_score'] = round(final_score, 3)
 
             critical_threshold = self.CONF["settings"]["thresholds"]["critical"]
@@ -184,20 +181,24 @@ class RAEAnalysis:
 
             plugin['analysis']['outofband'] = outofband
 
-            row.append(plugin['title'])
-            row.append(len(plugin['hosts']))
-            row.append(plugin['first_seen'])
-            row.append(plugin['cvss'])
-            row.append(plugin['analysis']['sev_score'])
-            row.append(plugin['analysis']['risk_score'])
-            row.append(plugin['analysis']['attack_surface'])
-            row.append(plugin['analysis']['protection'])
-            row.append(plugin['analysis']['availability'])
-            row.append(plugin['analysis']['impact_score'])
-            row.append(round(plugin['analysis']['final_score'], 3))
-            row.append(classification)
-            row.append(outofband)
-            row.append(plugin['threat'] + plugin['impact'])
+            row.extend(
+                (
+                    plugin['title'],
+                    len(plugin['hosts']),
+                    plugin['first_seen'],
+                    plugin['cvss'],
+                    plugin['analysis']['sev_score'],
+                    plugin['analysis']['risk_score'],
+                    plugin['analysis']['attack_surface'],
+                    plugin['analysis']['protection'],
+                    plugin['analysis']['availability'],
+                    plugin['analysis']['impact_score'],
+                    round(plugin['analysis']['final_score'], 3),
+                    classification,
+                    outofband,
+                    plugin['threat'] + plugin['impact'],
+                )
+            )
             writer.writerow(row)
 
         print('Calculate Final Complete')
